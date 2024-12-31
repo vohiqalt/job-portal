@@ -54,7 +54,7 @@ export default function Navbar() {
               className="hover:bg-gray-700 px-4 py-2 rounded-lg transition duration-300 ease-in-out flex items-center space-x-2"
             >
               <FiUser />
-              <span>Account</span>
+              <span>{session.user.name || "User"}</span>
             </button>
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-40 bg-gray-800 rounded shadow-lg">
