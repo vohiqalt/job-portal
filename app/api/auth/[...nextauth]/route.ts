@@ -1,8 +1,8 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import dbConnect from "../../../../lib/mongodb";
-import User from "../../../../models/User";
+import dbConnect from "@/lib/mongodb";
+import User from "@/models/User";
 import bcrypt from "bcryptjs";
 
 export const authOptions = {
@@ -24,7 +24,7 @@ export const authOptions = {
             throw new Error("Email and password are required.");
           }
 
-          await dbConnect();
+          await dbConnect(); // Make sure we connect
 
           const user = await User.findOne({ email });
           if (!user) {
@@ -40,23 +40,22 @@ export const authOptions = {
             throw new Error("Invalid email or password.");
           }
 
-          // Return the user object including additional fields
+          // Return an object that will become `user` in jwt()
           return {
             id: user._id.toString(),
             name: user.name,
             email: user.email,
+            userType: user.userType,
             bio: user.bio || "",
             location: user.location || "",
-            userType: user.userType,
           };
         } catch (error) {
+          console.error("Authorize Error:", error);
           if (error instanceof Error) {
-            console.error("Authorize Error:", error.message);
             throw new Error(
               error.message || "An error occurred during authorization."
             );
           } else {
-            console.error("Authorize Error:", error);
             throw new Error("An error occurred during authorization.");
           }
         }
@@ -66,43 +65,56 @@ export const authOptions = {
   callbacks: {
     async jwt({
       token,
-      account,
       user,
+      account,
     }: {
       token: any;
-      account: any;
       user?: any;
+      account?: any;
     }) {
       await dbConnect();
 
-      // If this is the first time the user signs in
+      // If user just logged in (or used credentials), update the token from the DB
       if (account && user) {
+        // Attempt to find or create a matching user in the DB
         let existingUser = await User.findOne({ email: user.email });
-
         if (!existingUser) {
-          // If the user doesn't exist, create a new one
           existingUser = await User.create({
             name: user.name,
             email: user.email,
-            userType: "job_seeker", // Default userType
+            userType: "job_seeker", // Default type
             provider: account.provider,
           });
         }
 
-        // Attach user information to the token
+        // Always keep token in sync with DB fields:
         token.id = existingUser._id.toString();
+        token.email = existingUser.email; // IMPORTANT
+        token.name = existingUser.name;
         token.userType = existingUser.userType;
         token.bio = existingUser.bio || "";
         token.location = existingUser.location || "";
+      } else {
+        // If it's an existing session, you might want to refresh from DB every time:
+        const existingUser = await User.findOne({ email: token.email });
+        if (existingUser) {
+          token.id = existingUser._id.toString();
+          token.email = existingUser.email;
+          token.name = existingUser.name;
+          token.userType = existingUser.userType;
+          token.bio = existingUser.bio || "";
+          token.location = existingUser.location || "";
+        }
       }
 
       return token;
     },
     async session({ session, token }: { session: any; token: any }) {
+      // Map token fields back to the session
       session.user = {
         id: token.id,
         name: token.name,
-        email: token.email,
+        email: token.email, // Make sure `email` is set
         bio: token.bio || "",
         location: token.location || "",
         userType: token.userType || "job_seeker",
@@ -114,5 +126,4 @@ export const authOptions = {
 };
 
 const handler = NextAuth(authOptions);
-
 export { handler as GET, handler as POST };
