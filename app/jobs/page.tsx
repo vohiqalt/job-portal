@@ -39,11 +39,11 @@ export default function JobsPage() {
           {jobs.map((job) => (
             <li key={job._id} className="p-4 border rounded shadow">
               <h2 className="text-xl font-semibold">{job.title}</h2>
-              <p className="text-gray-600">{job.company}</p>
-              <p className="text-gray-500">{job.location}</p>
-              <p className="text-gray-800">{job.description}</p>
+              <p className="text-gray-300">{job.company}</p>
+              <p className="text-gray-200">{job.location}</p>
+              <p className="text-gray-500">{job.description}</p>
               {job.salary && (
-                <p className="text-gray-700 font-medium">
+                <p className="text-gray-300 font-medium">
                   Salary: ${job.salary}
                 </p>
               )}
