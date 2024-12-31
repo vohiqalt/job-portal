@@ -1,3 +1,8 @@
+export const metadata = {
+  title: "Job Portal",
+  description: "Find your next career opportunity.",
+};
+
 export default function Home() {
   return (
     <main className="flex flex-col items-center justify-center h-screen bg-gray-50">
