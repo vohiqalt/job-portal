@@ -23,23 +23,35 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           >
             Jobs
           </Link>
-          <Link
-            href="/jobs/create"
-            className="px-4 py-2 rounded bg-blue-500 hover:bg-blue-700"
-          >
-            Create Job
-          </Link>
-
-          {session ? (
-            <button
-              onClick={() => signOut()}
-              className="px-4 py-2 rounded bg-red-500 hover:bg-red-700"
+          {!session && (
+            <Link
+              href="/register"
+              className="px-4 py-2 rounded bg-green-500 hover:bg-green-700"
             >
-              Logout
-            </button>
+              Register
+            </Link>
+          )}
+          {session?.user?.userType === "employer" && (
+            <Link
+              href="/jobs/create"
+              className="px-4 py-2 rounded bg-yellow-500 hover:bg-yellow-700"
+            >
+              Post a Job
+            </Link>
+          )}
+          {session ? (
+            <>
+              <span>Welcome, {session.user.name}!</span>
+              <button
+                onClick={() => signOut()}
+                className="px-4 py-2 rounded bg-red-500 hover:bg-red-700"
+              >
+                Logout
+              </button>
+            </>
           ) : (
             <button
-              onClick={() => signIn("google")}
+              onClick={() => signIn()}
               className="px-4 py-2 rounded bg-green-500 hover:bg-green-700"
             >
               Login
