@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
-const jobs = [
+// In-memory mock database (replace with a real database later)
+let jobs = [
   {
     id: 1,
     title: "Frontend Developer",
@@ -24,4 +25,17 @@ const jobs = [
 
 export async function GET() {
   return NextResponse.json(jobs);
+}
+
+export async function POST(req: Request) {
+  const body = await req.json();
+
+  const newJob = {
+    id: jobs.length + 1, // Generate a simple ID (replace with DB auto-generated ID later)
+    ...body,
+  };
+
+  jobs.push(newJob);
+
+  return NextResponse.json(newJob, { status: 201 });
 }

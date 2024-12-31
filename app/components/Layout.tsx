@@ -23,6 +23,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           >
             Jobs
           </Link>
+          <Link
+            href="/jobs/create"
+            className="px-4 py-2 rounded bg-blue-500 hover:bg-blue-700"
+          >
+            Create Job
+          </Link>
+
           {session ? (
             <button
               onClick={() => signOut()}
