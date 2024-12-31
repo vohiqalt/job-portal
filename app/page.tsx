@@ -18,7 +18,7 @@ export default function Home() {
               link="/jobs"
             />
             <FeatureCard
-              title="Create Your Profile"
+              title="Your Profile"
               description="Showcase your skills, experience, and achievements to potential employers."
               link="/profile"
             />
