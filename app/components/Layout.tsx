@@ -32,12 +32,20 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </Link>
           )}
           {session?.user?.userType === "employer" && (
-            <Link
-              href="/jobs/create"
-              className="px-4 py-2 rounded bg-yellow-500 hover:bg-yellow-700"
-            >
-              Post a Job
-            </Link>
+            <>
+              <Link
+                href="/jobs/create"
+                className="px-4 py-2 rounded bg-yellow-500 hover:bg-yellow-700"
+              >
+                Post a Job
+              </Link>
+              <Link
+                href="/my-jobs"
+                className="px-4 py-2 rounded bg-purple-500 hover:bg-purple-700"
+              >
+                My Job Offers
+              </Link>
+            </>
           )}
           {session ? (
             <>
