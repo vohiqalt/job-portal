@@ -7,11 +7,12 @@ const JobSchema = new Schema(
     location: { type: String, required: true },
     salary: { type: Number, required: false },
     description: { type: String, required: true },
+    isHidden: { type: Boolean, default: false }, // Default to false
     employerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-    }, // Reference to User
+    },
   },
   { timestamps: true }
 );

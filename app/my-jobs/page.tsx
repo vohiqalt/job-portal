@@ -17,12 +17,16 @@ export default function MyJobsPage() {
 
   useEffect(() => {
     async function fetchMyJobs() {
-      const res = await fetch("/api/my-jobs");
-      if (res.ok) {
-        const data: Job[] = await res.json();
-        setJobs(data);
-      } else {
-        console.error("Failed to fetch jobs");
+      try {
+        const res = await fetch("/api/my-jobs");
+        if (res.ok) {
+          const data: Job[] = await res.json();
+          setJobs(data);
+        } else {
+          console.error("Failed to fetch jobs. Status:", res.status);
+        }
+      } catch (error) {
+        console.error("Error fetching jobs:", error);
       }
     }
 
@@ -30,28 +34,47 @@ export default function MyJobsPage() {
   }, []);
 
   async function deleteJob(id: string) {
-    const res = await fetch(`/api/my-jobs/${id}`, { method: "DELETE" });
-    if (res.ok) {
-      setJobs((prevJobs) => prevJobs.filter((job) => job._id !== id));
-    } else {
-      console.error("Failed to delete job");
+    try {
+      console.log("Deleting job ID:", id);
+      const res = await fetch(`/api/my-jobs/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setJobs((prevJobs) => prevJobs.filter((job) => job._id !== id));
+        console.log("Job deleted successfully");
+      } else {
+        console.error("Failed to delete job. Status:", res.status);
+      }
+    } catch (error) {
+      console.error("Error deleting job:", error);
     }
   }
 
   async function toggleJobVisibility(id: string, isHidden: boolean) {
-    const res = await fetch(`/api/my-jobs/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ isHidden: !isHidden }),
-    });
-    if (res.ok) {
-      setJobs((prevJobs) =>
-        prevJobs.map((job) =>
-          job._id === id ? { ...job, isHidden: !isHidden } : job
-        )
+    try {
+      console.log(
+        "Toggling visibility for job ID:",
+        id,
+        "Current state:",
+        isHidden
       );
-    } else {
-      console.error("Failed to toggle job visibility");
+
+      const res = await fetch(`/api/my-jobs/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isHidden: !isHidden }),
+      });
+
+      if (res.ok) {
+        const updatedJob = await res.json();
+        console.log("Updated Job from API:", updatedJob);
+
+        setJobs((prevJobs) =>
+          prevJobs.map((job) => (job._id === updatedJob._id ? updatedJob : job))
+        );
+      } else {
+        console.error("Failed to toggle job visibility. Status:", res.status);
+      }
+    } catch (error) {
+      console.error("Error toggling job visibility:", error);
     }
   }
 
@@ -87,6 +110,7 @@ export default function MyJobsPage() {
                 >
                   {job.isHidden ? "Unhide" : "Hide"}
                 </button>
+
                 <button
                   onClick={() => deleteJob(job._id)}
                   className="px-4 py-2 rounded bg-red-600 text-white"

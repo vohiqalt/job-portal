@@ -9,6 +9,7 @@ type Job = {
   location: string;
   description: string;
   salary?: number; // Include salary as an optional field
+  isHidden: boolean; // Add a property to track if the job is hidden
 };
 
 export default function JobsPage() {
@@ -19,7 +20,9 @@ export default function JobsPage() {
       const res = await fetch("/api/jobs");
       if (res.ok) {
         const data: Job[] = await res.json(); // Ensure the response is typed
-        setJobs(data);
+        // Filter out hidden jobs before setting state
+        const visibleJobs = data.filter((job) => !job.isHidden);
+        setJobs(visibleJobs);
       } else {
         console.error("Failed to fetch jobs");
       }

@@ -3,6 +3,7 @@ import { authOptions } from "../../auth/[...nextauth]/route";
 import dbConnect from "../../../../lib/mongodb";
 import Job from "../../../../models/Job";
 
+// DELETE a Job Offer
 export async function DELETE(
   req: Request,
   { params }: { params: { id: string } }
@@ -18,15 +19,31 @@ export async function DELETE(
   await dbConnect();
 
   try {
-    await Job.deleteOne({ _id: params.id, employerId: session.user.id });
+    const { id } = params;
+    console.log("Deleting job with ID:", id);
+
+    const deletedJob = await Job.deleteOne({
+      _id: id,
+      employerId: session.user.id,
+    });
+
+    if (deletedJob.deletedCount === 0) {
+      return new Response(
+        JSON.stringify({ error: "Job not found or unauthorized" }),
+        { status: 404 }
+      );
+    }
+
     return new Response(null, { status: 204 });
   } catch (error) {
+    console.error("Error deleting job:", error);
     return new Response(JSON.stringify({ error: "Failed to delete job" }), {
       status: 500,
     });
   }
 }
 
+// PATCH a Job Offer (Toggle Visibility)
 export async function PATCH(
   req: Request,
   { params }: { params: { id: string } }
@@ -46,11 +63,21 @@ export async function PATCH(
     const updatedJob = await Job.findOneAndUpdate(
       { _id: params.id, employerId: session.user.id },
       { isHidden },
-      { new: true }
+      { new: true } // Return the updated document
     );
+
+    if (!updatedJob) {
+      return new Response(
+        JSON.stringify({ error: "Job not found or unauthorized" }),
+        { status: 404 }
+      );
+    }
+
+    console.log("Updated Job in Backend:", updatedJob);
 
     return new Response(JSON.stringify(updatedJob), { status: 200 });
   } catch (error) {
+    console.error("Error updating job visibility:", error);
     return new Response(
       JSON.stringify({ error: "Failed to update job visibility" }),
       { status: 500 }
