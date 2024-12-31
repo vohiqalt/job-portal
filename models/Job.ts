@@ -5,12 +5,16 @@ const JobSchema = new Schema(
     title: { type: String, required: true },
     company: { type: String, required: true },
     location: { type: String, required: true },
-    salary: { type: Number, required: false },
+    salary: { type: Number },
     description: { type: String, required: true },
-    isHidden: { type: Boolean, default: false }, // Default to false
+    isHidden: { type: Boolean, default: false },
     employerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: true,
+    },
+    userEmail: {
+      type: String,
       required: true,
     },
   },
