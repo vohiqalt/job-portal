@@ -43,7 +43,7 @@ export default function CreateJobPage() {
         <input
           type="text"
           placeholder="Job Title"
-          className="w-full p-2 border border-gray-300 rounded"
+          className="w-full p-2 border border-gray-300 rounded text-black"
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
           required
@@ -51,7 +51,7 @@ export default function CreateJobPage() {
         <input
           type="text"
           placeholder="Company Name"
-          className="w-full p-2 border border-gray-300 rounded"
+          className="w-full p-2 border border-gray-300 rounded text-black"
           value={form.company}
           onChange={(e) => setForm({ ...form, company: e.target.value })}
           required
@@ -59,7 +59,7 @@ export default function CreateJobPage() {
         <input
           type="text"
           placeholder="Location"
-          className="w-full p-2 border border-gray-300 rounded"
+          className="w-full p-2 border border-gray-300 rounded text-black"
           value={form.location}
           onChange={(e) => setForm({ ...form, location: e.target.value })}
           required
@@ -67,7 +67,7 @@ export default function CreateJobPage() {
         <input
           type="text"
           placeholder="Salary"
-          className="w-full p-2 border border-gray-300 rounded"
+          className="w-full p-2 border border-gray-300 rounded text-black"
           value={form.salary}
           onChange={(e) => setForm({ ...form, salary: e.target.value })}
           required
@@ -75,13 +75,13 @@ export default function CreateJobPage() {
         <input
           type="text"
           placeholder="Tags (comma-separated)"
-          className="w-full p-2 border border-gray-300 rounded"
+          className="w-full p-2 border border-gray-300 rounded text-black"
           value={form.tags}
           onChange={(e) => setForm({ ...form, tags: e.target.value })}
         />
         <textarea
           placeholder="Job Description"
-          className="w-full p-2 border border-gray-300 rounded"
+          className="w-full p-2 border border-gray-300 rounded text-black"
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
           required

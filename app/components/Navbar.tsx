@@ -1,9 +1,19 @@
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { FiLogIn, FiUser, FiLogOut } from "react-icons/fi";
+import {
+  FiUser,
+  FiSettings,
+  FiLogOut,
+  FiPlusCircle,
+  FiList,
+} from "react-icons/fi";
+import { useState } from "react";
 
 export default function Navbar() {
   const { data: session } = useSession();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   return (
     <nav className="text-white bg-transparent p-4 flex justify-between items-center w-full max-w-screen-xl mx-auto">
@@ -20,38 +30,66 @@ export default function Navbar() {
           Jobs
         </Link>
         {session?.user?.userType === "employer" && (
-          <Link
-            href="/my-jobs"
-            className="hover:bg-gray-700 px-4 py-2 rounded-lg transition duration-300 ease-in-out"
-          >
-            My Job Offers
-          </Link>
+          <>
+            <Link
+              href="/jobs/create"
+              className="hover:bg-gray-700 px-4 py-2 rounded-lg transition duration-300 ease-in-out flex items-center space-x-2"
+            >
+              <FiPlusCircle />
+              <span>Add Job</span>
+            </Link>
+            <Link
+              href="/my-jobs"
+              className="hover:bg-gray-700 px-4 py-2 rounded-lg transition duration-300 ease-in-out flex items-center space-x-2"
+            >
+              <FiList />
+              <span>My Listings</span>
+            </Link>
+          </>
         )}
-        {!session ? (
+        {session ? (
+          <div className="relative">
+            <button
+              onClick={toggleDropdown}
+              className="hover:bg-gray-700 px-4 py-2 rounded-lg transition duration-300 ease-in-out flex items-center space-x-2"
+            >
+              <FiUser />
+              <span>Account</span>
+            </button>
+            {dropdownOpen && (
+              <div className="absolute right-0 mt-2 w-40 bg-gray-800 rounded shadow-lg">
+                <Link
+                  href="/account/settings"
+                  className="block px-4 py-2 hover:bg-gray-700"
+                >
+                  <FiSettings className="inline mr-2" />
+                  Settings
+                </Link>
+                <button
+                  onClick={() => signOut()}
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-700"
+                >
+                  <FiLogOut className="inline mr-2" />
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
           <>
             <Link
               href="/login"
               className="hover:bg-gray-700 px-4 py-2 rounded-lg transition duration-300 ease-in-out"
             >
-              <FiLogIn className="inline mr-2" />
               Login
             </Link>
             <Link
               href="/register"
               className="hover:bg-gray-700 px-4 py-2 rounded-lg transition duration-300 ease-in-out"
             >
-              <FiUser className="inline mr-2" />
               Register
             </Link>
           </>
-        ) : (
-          <button
-            onClick={() => signOut()}
-            className="hover:bg-gray-700 px-4 py-2 rounded-lg transition duration-300 ease-in-out"
-          >
-            <FiLogOut className="inline mr-2" />
-            Logout
-          </button>
         )}
       </div>
     </nav>

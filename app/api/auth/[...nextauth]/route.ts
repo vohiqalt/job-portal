@@ -18,28 +18,48 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const { email, password } = credentials || {};
-        if (!email || !password) {
-          throw new Error("Email and password are required.");
-        }
+        try {
+          const { email, password } = credentials || {};
+          if (!email || !password) {
+            throw new Error("Email and password are required.");
+          }
 
-        await dbConnect();
-        const user = await User.findOne({ email });
-        if (!user) {
-          throw new Error("Invalid email or password.");
-        }
+          await dbConnect();
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-          throw new Error("Invalid email or password.");
-        }
+          const user = await User.findOne({ email });
+          if (!user) {
+            throw new Error("Invalid email or password.");
+          }
 
-        return {
-          id: user._id.toString(),
-          name: user.name,
-          email: user.email,
-          userType: user.userType,
-        };
+          if (!user.password) {
+            throw new Error("User account does not have a password set.");
+          }
+
+          const isPasswordValid = await bcrypt.compare(password, user.password);
+          if (!isPasswordValid) {
+            throw new Error("Invalid email or password.");
+          }
+
+          // Return the user object including additional fields
+          return {
+            id: user._id.toString(),
+            name: user.name,
+            email: user.email,
+            bio: user.bio || "",
+            location: user.location || "",
+            userType: user.userType,
+          };
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error("Authorize Error:", error.message);
+            throw new Error(
+              error.message || "An error occurred during authorization."
+            );
+          } else {
+            console.error("Authorize Error:", error);
+            throw new Error("An error occurred during authorization.");
+          }
+        }
       },
     }),
   ],
@@ -53,11 +73,10 @@ export const authOptions = {
       account: any;
       user?: any;
     }) {
+      await dbConnect();
+
       // If this is the first time the user signs in
       if (account && user) {
-        await dbConnect();
-
-        // Find the user in the database
         let existingUser = await User.findOne({ email: user.email });
 
         if (!existingUser) {
@@ -70,15 +89,24 @@ export const authOptions = {
           });
         }
 
-        token.id = existingUser._id.toString(); // Add the MongoDB `_id` to the token
-        token.userType = existingUser.userType; // Add userType to the token
+        // Attach user information to the token
+        token.id = existingUser._id.toString();
+        token.userType = existingUser.userType;
+        token.bio = existingUser.bio || "";
+        token.location = existingUser.location || "";
       }
 
       return token;
     },
     async session({ session, token }: { session: any; token: any }) {
-      session.user.id = token.id; // Add the user ID to the session
-      session.user.userType = token.userType; // Add the userType to the session
+      session.user = {
+        id: token.id,
+        name: token.name,
+        email: token.email,
+        bio: token.bio || "",
+        location: token.location || "",
+        userType: token.userType || "job_seeker",
+      };
       return session;
     },
   },

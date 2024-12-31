@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
+    name: "",
     email: "",
     password: "",
     userType: "job_seeker",
@@ -18,7 +19,7 @@ export default function RegisterPage() {
     setError(null);
 
     // Handle registration logic here
-    const res = await fetch("/api/register", {
+    const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -40,13 +41,21 @@ export default function RegisterPage() {
       <h1 className="text-3xl font-bold mb-4">Register</h1>
       <form
         onSubmit={handleSubmit}
-        className="space-y-4 w-full  text-black max-w-md p-4 bg-black shadow-md rounded"
+        className="space-y-4 w-full max-w-md p-4 bg-black shadow-md rounded"
       >
         {error && <p className="text-red-500">{error}</p>}
         <input
+          type="text"
+          placeholder="Name"
+          className="w-full p-2 border border-gray-300 rounded bg-gray-200 text-center text-black"
+          value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          required
+        />
+        <input
           type="email"
           placeholder="Email"
-          className="w-full p-2 border border-gray-300 rounded bg-gray-200 text-center"
+          className="w-full p-2 border border-gray-300 rounded bg-gray-200 text-center text-black"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
           required
@@ -54,13 +63,13 @@ export default function RegisterPage() {
         <input
           type="password"
           placeholder="Password"
-          className="w-full p-2 border border-gray-300 rounded bg-gray-200 text-center"
+          className="w-full p-2 border border-gray-300 rounded bg-gray-200 text-center text-black"
           value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
           required
         />
         <select
-          className="w-full p-2 border border-gray-300 rounded bg-gray-200 text-center"
+          className="w-full p-2 border border-gray-300 rounded bg-gray-200 text-center text-black"
           value={form.userType}
           onChange={(e) => setForm({ ...form, userType: e.target.value })}
           required
