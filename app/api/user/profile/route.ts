@@ -74,3 +74,43 @@ export async function GET() {
     );
   }
 }
+
+// PUT /api/user/profile
+export async function PUT(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const userEmail = session.user.email;
+    if (!userEmail) {
+      return NextResponse.json(
+        { error: "No email in session" },
+        { status: 400 }
+      );
+    }
+
+    const body = await req.json();
+
+    await dbConnect();
+
+    const user = await User.findOneAndUpdate(
+      { email: userEmail },
+      { $set: body },
+      { new: true, runValidators: true }
+    );
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: "Profile updated successfully" });
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
