@@ -48,7 +48,8 @@ export const authOptions = {
           userType: user.userType,
           bio: user.bio || "",
           location: user.location || "",
-          companyName: user.companyName || "", // Add this field for employers
+          companyName: user.companyName || "",
+          companyLogo: user.companyLogo || "",
         };
       },
     }),
@@ -83,7 +84,8 @@ export const authOptions = {
         token.userType = existingUser.userType;
         token.bio = existingUser.bio || "";
         token.location = existingUser.location || "";
-        token.companyName = existingUser.companyName || ""; // Add this field for employers
+        token.companyName = existingUser.companyName || "";
+        token.companyLogo = existingUser.companyLogo || "";
       } else {
         const existingUser = await User.findOne({ email: token.email });
         if (existingUser) {
@@ -93,7 +95,8 @@ export const authOptions = {
           token.userType = existingUser.userType;
           token.bio = existingUser.bio || "";
           token.location = existingUser.location || "";
-          token.companyName = existingUser.companyName || ""; // Add this field for employers
+          token.companyName = existingUser.companyName || "";
+          token.companyLogo = existingUser.companyLogo || "";
         }
       }
 
@@ -103,7 +106,8 @@ export const authOptions = {
       session.user = {
         id: token.id,
         name: token.name,
-        companyName: token.companyName || "", // Add this field for employers
+        companyName: token.companyName || "",
+        companyLogo: token.companyLogo || "",
         email: token.email,
         bio: token.bio || "",
         location: token.location || "",

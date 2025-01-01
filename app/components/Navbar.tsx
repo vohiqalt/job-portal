@@ -13,11 +13,14 @@ import { FaBookmark, FaEdit } from "react-icons/fa";
 import { FaBuilding } from "react-icons/fa6";
 import { useState, useRef, useEffect } from "react";
 import { ImFilesEmpty, ImProfile } from "react-icons/im";
+import Image from "next/image";
 
 export default function Navbar() {
   const { data: session } = useSession();
   const userType = session?.user?.userType; // "employer" | "job_seeker" | undefined
   const companyName = session?.user?.companyName;
+  const companyLogo = session?.user?.companyLogo;
+  const photoURL = session?.user?.photoURL;
   const description = session?.user?.companyDescription;
   const userName = session?.user?.name;
 
@@ -87,9 +90,33 @@ export default function Navbar() {
               onClick={toggleDropdown}
               className="hover:bg-gray-700 px-4 py-2 rounded-lg transition duration-300 ease-in-out flex items-center space-x-2"
             >
-              <FiUser />
-              <span className="flex items-center space-x-1">
+              <span className="flex items-center space-x-2">
+                {/* Display logo or photo */}
+                {(userType === "employer" && companyLogo) ||
+                (userType === "job_seeker" && photoURL) ? (
+                  <Image
+                    src={
+                      userType === "employer"
+                        ? companyLogo || "/default-company-logo.png"
+                        : photoURL || "/default-user-photo.png"
+                    }
+                    alt={
+                      userType === "employer" ? "Company Logo" : "User Photo"
+                    }
+                    width={24}
+                    height={24}
+                    className="rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center text-white">
+                    {userType === "employer" ? "C" : "U"}
+                  </div>
+                )}
+
+                {/* Display company name or user name */}
                 <span>{displayName}</span>
+
+                {/* Validation warning */}
                 {((userType === "job_seeker" && !userName) ||
                   (userType === "employer" && !companyName)) && (
                   <span className="pl-1 text-red-500 font-bold">!</span>

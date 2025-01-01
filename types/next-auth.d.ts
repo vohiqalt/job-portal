@@ -5,6 +5,8 @@ declare module "next-auth" {
     id: string;
     name?: string;
     companyName?: string;
+    companyLogo?: string;
+    photoURL?: string;
     companyDescription?: string;
     email: string;
     image?: string;
