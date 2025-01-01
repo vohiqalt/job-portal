@@ -18,6 +18,7 @@ export default function Navbar() {
   const { data: session } = useSession();
   const userType = session?.user?.userType; // "employer" | "job_seeker" | undefined
   const companyName = session?.user?.companyName;
+  const description = session?.user?.companyDescription;
   const userName = session?.user?.name;
 
   const displayName =
@@ -146,7 +147,8 @@ export default function Navbar() {
                         <FaBuilding className="inline mr-2" />
                         Company Profile
                       </span>
-                      {!companyName && (
+                      {(companyName?.trim() === "" ||
+                        description?.trim() === "") && (
                         <span className="text-red-500 font-bold">!</span>
                       )}
                     </Link>

@@ -24,6 +24,9 @@ export default function BasicInfoSection({
   setEditingBasicInfo,
   onSave,
 }: Props) {
+  const MIN_DESCRIPTION_LENGTH = 10;
+  const MAX_DESCRIPTION_LENGTH = 500;
+
   function handleBasicInfoChange(
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
@@ -33,7 +36,24 @@ export default function BasicInfoSection({
 
   async function toggleEditBasicInfo() {
     if (editingBasicInfo) {
-      // user clicked Save
+      // Validation for required fields
+      if (!companyData.companyName.trim()) {
+        alert("Company Name cannot be empty.");
+        return;
+      }
+
+      const descriptionLength = companyData.companyDescription.trim().length;
+      if (
+        descriptionLength < MIN_DESCRIPTION_LENGTH ||
+        descriptionLength > MAX_DESCRIPTION_LENGTH
+      ) {
+        alert(
+          `Company Description must be between ${MIN_DESCRIPTION_LENGTH} and ${MAX_DESCRIPTION_LENGTH} characters.`
+        );
+        return;
+      }
+
+      // User clicked Save
       await onSave();
       setEditingBasicInfo(false);
     } else {
@@ -79,6 +99,7 @@ export default function BasicInfoSection({
         </div>
 
         <div className="flex-1 space-y-2">
+          {/* Company Name */}
           {editingBasicInfo ? (
             <input
               type="text"
@@ -89,22 +110,30 @@ export default function BasicInfoSection({
               className="bg-gray-900 text-white px-2 py-1 rounded w-full"
             />
           ) : (
-            <p className="text-lg font-bold">
+            <p className="text-lg font-bold flex items-center">
               {companyData.companyName || "Company Name"}
+              {!companyData.companyName && (
+                <span className="text-red-500 font-bold ml-2">!</span>
+              )}
             </p>
           )}
 
+          {/* Company Description */}
           {editingBasicInfo ? (
             <textarea
               name="companyDescription"
               value={companyData.companyDescription}
               onChange={handleBasicInfoChange}
-              placeholder="Company Description (required)"
+              placeholder={`Company Description (required, ${MIN_DESCRIPTION_LENGTH}-${MAX_DESCRIPTION_LENGTH} characters)`}
               className="bg-gray-900 text-white px-2 py-1 rounded w-full min-h-[80px]"
             />
           ) : (
-            <p className="text-gray-400">
+            <p className="text-gray-400 flex items-center">
               {companyData.companyDescription || "Company Description"}
+              {companyData.companyDescription.trim().length <
+                MIN_DESCRIPTION_LENGTH && (
+                <span className="text-red-500 font-bold ml-2">!</span>
+              )}
             </p>
           )}
         </div>
