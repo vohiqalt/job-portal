@@ -24,7 +24,7 @@ export const authOptions = {
             throw new Error("Email and password are required.");
           }
 
-          await dbConnect(); // Make sure we connect
+          await dbConnect();
 
           const user = await User.findOne({ email });
           if (!user) {
@@ -32,7 +32,9 @@ export const authOptions = {
           }
 
           if (!user.password) {
-            throw new Error("User account does not have a password set.");
+            throw new Error(
+              "This account was registered using Google. Please log in with Google."
+            );
           }
 
           const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -40,7 +42,6 @@ export const authOptions = {
             throw new Error("Invalid email or password.");
           }
 
-          // Return an object that will become `user` in jwt()
           return {
             id: user._id.toString(),
             name: user.name,
@@ -51,33 +52,18 @@ export const authOptions = {
           };
         } catch (error) {
           console.error("Authorize Error:", error);
-          if (error instanceof Error) {
-            throw new Error(
-              error.message || "An error occurred during authorization."
-            );
-          } else {
-            throw new Error("An error occurred during authorization.");
-          }
+          throw new Error(error.message || "Authorization failed.");
         }
       },
     }),
   ],
   callbacks: {
-    async jwt({
-      token,
-      user,
-      account,
-    }: {
-      token: any;
-      user?: any;
-      account?: any;
-    }) {
+    async jwt({ token, user, account }) {
       await dbConnect();
 
-      // If user just logged in (or used credentials), update the token from the DB
       if (account && user) {
-        // Attempt to find or create a matching user in the DB
         let existingUser = await User.findOne({ email: user.email });
+
         if (!existingUser) {
           existingUser = await User.create({
             name: user.name,
@@ -87,15 +73,13 @@ export const authOptions = {
           });
         }
 
-        // Always keep token in sync with DB fields:
         token.id = existingUser._id.toString();
-        token.email = existingUser.email; // IMPORTANT
+        token.email = existingUser.email;
         token.name = existingUser.name;
         token.userType = existingUser.userType;
         token.bio = existingUser.bio || "";
         token.location = existingUser.location || "";
       } else {
-        // If it's an existing session, you might want to refresh from DB every time:
         const existingUser = await User.findOne({ email: token.email });
         if (existingUser) {
           token.id = existingUser._id.toString();
@@ -109,12 +93,11 @@ export const authOptions = {
 
       return token;
     },
-    async session({ session, token }: { session: any; token: any }) {
-      // Map token fields back to the session
+    async session({ session, token }) {
       session.user = {
         id: token.id,
         name: token.name,
-        email: token.email, // Make sure `email` is set
+        email: token.email,
         bio: token.bio || "",
         location: token.location || "",
         userType: token.userType || "job_seeker",
