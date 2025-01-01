@@ -51,7 +51,6 @@ export async function GET() {
       });
     }
 
-    // If employer
     if (user.userType === "employer") {
       return NextResponse.json({
         name: user.name,
@@ -65,7 +64,6 @@ export async function GET() {
       });
     }
 
-    // If somehow neither type was set
     return NextResponse.json({ error: "Invalid userType" }, { status: 400 });
   } catch (error) {
     console.error("Error getting profile:", error);
@@ -96,15 +94,27 @@ export async function PUT(req: Request) {
 
     await dbConnect();
 
-    const user = await User.findOneAndUpdate(
-      { email: userEmail },
-      { $set: body },
-      { new: true, runValidators: true }
-    );
-
+    const user = await User.findOne({ email: userEmail });
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
+
+    // Prevent email changes for Google users
+    if (user.provider === "google" && body.email && body.email !== user.email) {
+      return NextResponse.json(
+        { error: "Email cannot be changed for Google OAuth users" },
+        { status: 403 }
+      );
+    }
+
+    // Update user fields (excluding email if provider is Google)
+    const updates = { ...body };
+    if (user.provider === "google") {
+      delete updates.email; // Ensure email is not updated
+    }
+
+    Object.assign(user, updates);
+    await user.save();
 
     return NextResponse.json({ message: "Profile updated successfully" });
   } catch (error) {
