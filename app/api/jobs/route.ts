@@ -16,9 +16,9 @@ export async function GET(req: Request) {
 
     await dbConnect();
 
-    // Fetch jobs and populate employerId to include companyName
+    // Fetch all jobs and include the companyLogo field from the employerId
     const jobs = await Job.find({})
-      .populate("employerId", "companyName") // Populate only the companyName field
+      .populate("employerId", "companyName companyLogo")
       .lean();
 
     return new Response(JSON.stringify(jobs), {
