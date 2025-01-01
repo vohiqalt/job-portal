@@ -36,4 +36,5 @@ export interface ProfileData {
   skills: string[];
   languages: string[];
   hobbies: string[];
+  provider?: string;
 }

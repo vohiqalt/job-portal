@@ -47,6 +47,7 @@ export async function GET() {
         hobbies: user.hobbies,
         location: user.location,
         bio: user.bio,
+        provider: user.provider,
       });
     }
 

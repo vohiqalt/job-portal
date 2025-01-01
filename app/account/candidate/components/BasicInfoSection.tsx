@@ -3,7 +3,7 @@
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { ProfileData } from "../profile/types";
 import { IoIosGlobe } from "react-icons/io";
-import { FaLinkedin, FaGithub, FaTwitter, FaFileAlt } from "react-icons/fa"; // LinkedIn, GitHub, Twitter, CV
+import { FaLinkedin, FaGithub, FaTwitter, FaFileAlt } from "react-icons/fa";
 
 interface Props {
   profileData: ProfileData;
@@ -16,19 +16,19 @@ interface Props {
 function extractNickname(url: string): string {
   try {
     const urlObj = new URL(url);
-    const path = urlObj.pathname.replace(/^\/+|\/+$/g, ""); // Remove leading/trailing slashes
-    return path.split("/").pop() || url; // Get the last segment of the path
+    const path = urlObj.pathname.replace(/^\/+|\/+$/g, "");
+    return path.split("/").pop() || url;
   } catch {
-    return url; // If invalid URL, return the full URL
+    return url;
   }
 }
 
 function stripWebsite(url: string): string {
   try {
     const urlObj = new URL(url);
-    return urlObj.hostname.replace(/^www\./, ""); // Remove "www."
+    return urlObj.hostname.replace(/^www\./, "");
   } catch {
-    return url; // If invalid URL, return the full URL
+    return url;
   }
 }
 
@@ -39,7 +39,6 @@ export default function BasicInfoSection({
   setEditing,
   onSave,
 }: Props) {
-  // Update local fields
   function handleChange(
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
@@ -47,10 +46,8 @@ export default function BasicInfoSection({
     setProfileData((prev) => ({ ...prev, [name]: value }));
   }
 
-  // Toggle editing
   async function handleToggleEdit() {
     if (editing) {
-      // User is about to save
       await onSave();
       setEditing(false);
     } else {
@@ -112,14 +109,24 @@ export default function BasicInfoSection({
 
           {/* Email */}
           {editing ? (
-            <input
-              type="email"
-              name="email"
-              value={profileData.email}
-              onChange={handleChange}
-              placeholder="Email (required)"
-              className="bg-gray-700 text-white px-2 py-1 rounded w-full"
-            />
+            profileData.provider === "google" ? (
+              <input
+                type="email"
+                name="email"
+                value={profileData.email}
+                disabled
+                className="bg-gray-700 text-gray-400 px-2 py-1 rounded w-full cursor-not-allowed"
+              />
+            ) : (
+              <input
+                type="email"
+                name="email"
+                value={profileData.email}
+                onChange={handleChange}
+                placeholder="Email (required)"
+                className="bg-gray-700 text-white px-2 py-1 rounded w-full"
+              />
+            )
           ) : (
             <p className="text-gray-400">
               {profileData.email || "Email Address"}
