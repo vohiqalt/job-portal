@@ -53,7 +53,7 @@ export default function Home() {
             <FeatureCard
               title="Post a Job"
               description="Create job listings to attract top talent to your organization."
-              link="/jobs/post"
+              link="/jobs/create"
             />
             <FeatureCard
               title="Manage Applications"
