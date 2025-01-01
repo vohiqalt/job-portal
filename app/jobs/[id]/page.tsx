@@ -70,7 +70,7 @@ export default function JobDetails() {
             />
           )}
           <div>
-            <h1 className="text-3xl font-bold mb-4">{job.title}</h1>
+            <h1 className="text-3xl font-bold">{job.title}</h1>
             <p className="text-lg text-gray-400 mb-2">
               {job.employerId.companyName}
             </p>
@@ -85,7 +85,7 @@ export default function JobDetails() {
           {job.salary ? (
             <p className="text-yellow-400 font-semibold text-xl flex items-center justify-end">
               <TbMoneybag className="mr-2" />
-              {`$${job.salary.toLocaleString()}`}
+              {`${job.salary.toLocaleString()} PLN`}
             </p>
           ) : (
             <p className="text-gray-400">Undisclosed salary</p>
