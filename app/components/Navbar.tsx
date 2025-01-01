@@ -156,7 +156,9 @@ export default function Navbar() {
                   Settings
                 </Link>
                 <button
-                  onClick={() => signOut()}
+                  onClick={() => {
+                    signOut({ callbackUrl: "/login" });
+                  }}
                   className="block w-full text-left px-4 py-2 hover:bg-gray-700"
                 >
                   <FiLogOut className="inline mr-2" />

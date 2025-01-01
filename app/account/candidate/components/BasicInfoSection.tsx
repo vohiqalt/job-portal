@@ -2,6 +2,8 @@
 
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { ProfileData } from "../profile/types";
+import { IoIosGlobe } from "react-icons/io";
+import { FaLinkedin, FaGithub, FaTwitter, FaFileAlt } from "react-icons/fa"; // LinkedIn, GitHub, Twitter, CV
 
 interface Props {
   profileData: ProfileData;
@@ -9,6 +11,25 @@ interface Props {
   editing: boolean;
   setEditing: Dispatch<SetStateAction<boolean>>;
   onSave: () => Promise<void>;
+}
+
+function extractNickname(url: string): string {
+  try {
+    const urlObj = new URL(url);
+    const path = urlObj.pathname.replace(/^\/+|\/+$/g, ""); // Remove leading/trailing slashes
+    return path.split("/").pop() || url; // Get the last segment of the path
+  } catch {
+    return url; // If invalid URL, return the full URL
+  }
+}
+
+function stripWebsite(url: string): string {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.hostname.replace(/^www\./, ""); // Remove "www."
+  } catch {
+    return url; // If invalid URL, return the full URL
+  }
 }
 
 export default function BasicInfoSection({
@@ -136,10 +157,17 @@ export default function BasicInfoSection({
             className="bg-gray-700 text-white px-2 py-1 rounded w-full"
           />
         ) : (
-          <p>
-            <span className="text-gray-300">Website:</span>{" "}
-            {profileData.personalWebsite || "N/A"}
-          </p>
+          <a
+            href={profileData.personalWebsite || "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-gray-300 hover:text-blue-400"
+          >
+            <IoIosGlobe className="text-xl" />
+            {profileData.personalWebsite
+              ? stripWebsite(profileData.personalWebsite)
+              : "N/A"}
+          </a>
         )}
 
         {/* LinkedIn */}
@@ -153,10 +181,17 @@ export default function BasicInfoSection({
             className="bg-gray-700 text-white px-2 py-1 rounded w-full"
           />
         ) : (
-          <p>
-            <span className="text-gray-300">LinkedIn:</span>{" "}
-            {profileData.linkedIn || "N/A"}
-          </p>
+          <a
+            href={profileData.linkedIn || "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-gray-300 hover:text-blue-400"
+          >
+            <FaLinkedin className="text-xl" />
+            {profileData.linkedIn
+              ? extractNickname(profileData.linkedIn)
+              : "N/A"}
+          </a>
         )}
 
         {/* GitHub */}
@@ -170,10 +205,15 @@ export default function BasicInfoSection({
             className="bg-gray-700 text-white px-2 py-1 rounded w-full"
           />
         ) : (
-          <p>
-            <span className="text-gray-300">GitHub:</span>{" "}
-            {profileData.github || "N/A"}
-          </p>
+          <a
+            href={profileData.github || "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-gray-300 hover:text-blue-400"
+          >
+            <FaGithub className="text-xl" />
+            {profileData.github ? extractNickname(profileData.github) : "N/A"}
+          </a>
         )}
 
         {/* Twitter */}
@@ -187,10 +227,15 @@ export default function BasicInfoSection({
             className="bg-gray-700 text-white px-2 py-1 rounded w-full"
           />
         ) : (
-          <p>
-            <span className="text-gray-300">Twitter:</span>{" "}
-            {profileData.twitter || "N/A"}
-          </p>
+          <a
+            href={profileData.twitter || "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-gray-300 hover:text-blue-400"
+          >
+            <FaTwitter className="text-xl" />
+            {profileData.twitter ? extractNickname(profileData.twitter) : "N/A"}
+          </a>
         )}
 
         {/* CV */}
@@ -204,16 +249,15 @@ export default function BasicInfoSection({
             className="bg-gray-700 text-white px-2 py-1 rounded w-full"
           />
         ) : (
-          <p>
-            <span className="text-gray-300">CV:</span>{" "}
-            {profileData.cv ? (
-              <a href={profileData.cv} className="underline">
-                Download
-              </a>
-            ) : (
-              "N/A"
-            )}
-          </p>
+          <a
+            href={profileData.cv || "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-gray-300 hover:text-blue-400"
+          >
+            <FaFileAlt className="text-xl" />
+            {profileData.cv ? "Download" : "N/A"}
+          </a>
         )}
       </div>
     </div>
