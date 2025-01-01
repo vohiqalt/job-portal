@@ -1,13 +1,7 @@
 "use client";
 
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
-
-interface CompanyData {
-  companyLogo: string;
-  companyName: string;
-  companyDescription: string;
-  howWeWork: string;
-}
+import { CompanyData } from "../types";
 
 interface Props {
   companyData: CompanyData;

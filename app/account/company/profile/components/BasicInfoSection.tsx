@@ -1,12 +1,26 @@
 "use client";
 
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
+import { CompanyData } from "../types";
+
+interface Props {
+  companyData: CompanyData;
+
+  setCompanyData: Dispatch<SetStateAction<CompanyData>>;
+
+  editingHowWeWork: boolean;
+
+  setEditingHowWeWork: Dispatch<SetStateAction<boolean>>;
+
+  onSave: () => Promise<void>;
+}
 
 interface CompanyData {
   companyLogo: string;
   companyName: string;
   companyDescription: string;
   howWeWork: string;
+  email: string;
 }
 
 interface Props {
@@ -15,6 +29,11 @@ interface Props {
   editingBasicInfo: boolean;
   setEditingBasicInfo: Dispatch<SetStateAction<boolean>>;
   onSave: () => Promise<void>;
+}
+
+function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
 }
 
 export default function BasicInfoSection({
@@ -36,9 +55,19 @@ export default function BasicInfoSection({
 
   async function toggleEditBasicInfo() {
     if (editingBasicInfo) {
-      // Validation for required fields
+      // Validation
       if (!companyData.companyName.trim()) {
         alert("Company Name cannot be empty.");
+        return;
+      }
+
+      if (!companyData.email.trim()) {
+        alert("Email cannot be empty.");
+        return;
+      }
+
+      if (!isValidEmail(companyData.email.trim())) {
+        alert("Please enter a valid email address.");
         return;
       }
 
@@ -53,7 +82,7 @@ export default function BasicInfoSection({
         return;
       }
 
-      // User clicked Save
+      // Save changes
       await onSave();
       setEditingBasicInfo(false);
     } else {
@@ -112,10 +141,21 @@ export default function BasicInfoSection({
           ) : (
             <p className="text-lg font-bold flex items-center">
               {companyData.companyName || "Company Name"}
-              {!companyData.companyName && (
-                <span className="text-red-500 font-bold ml-2">!</span>
-              )}
             </p>
+          )}
+
+          {/* Email */}
+          {editingBasicInfo ? (
+            <input
+              type="email"
+              name="email"
+              value={companyData.email}
+              onChange={handleBasicInfoChange}
+              placeholder="Email (required)"
+              className="bg-gray-900 text-white px-2 py-1 rounded w-full"
+            />
+          ) : (
+            <p className="text-gray-400">{companyData.email || "Email"}</p>
           )}
 
           {/* Company Description */}
@@ -128,12 +168,8 @@ export default function BasicInfoSection({
               className="bg-gray-900 text-white px-2 py-1 rounded w-full min-h-[80px]"
             />
           ) : (
-            <p className="text-gray-400 flex items-center">
+            <p className="text-gray-400">
               {companyData.companyDescription || "Company Description"}
-              {companyData.companyDescription.trim().length <
-                MIN_DESCRIPTION_LENGTH && (
-                <span className="text-red-500 font-bold ml-2">!</span>
-              )}
             </p>
           )}
         </div>

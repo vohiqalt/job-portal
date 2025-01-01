@@ -7,24 +7,28 @@ import HowWeWorkSection from "./components/HowWeWorkSection";
 interface CompanyData {
   companyLogo: string;
   companyName: string;
+  email: string;
   companyDescription: string;
   howWeWork: string;
-  // Add more fields if you like
 }
 
 export default function CompanyProfilePage() {
   const [companyData, setCompanyData] = useState<CompanyData>({
     companyLogo: "",
     companyName: "",
+    email: "",
     companyDescription: "",
     howWeWork: "",
+    personalWebsite: "",
+    linkedIn: "",
+    twitter: "",
   });
 
   // Edit toggles
   const [editingBasicInfo, setEditingBasicInfo] = useState(false);
   const [editingHowWeWork, setEditingHowWeWork] = useState(false);
 
-  // Loading
+  // Loading state
   const [loading, setLoading] = useState(true);
 
   // Fetch data on mount
@@ -45,10 +49,11 @@ export default function CompanyProfilePage() {
         setLoading(false);
       }
     }
+
     fetchCompanyProfile();
   }, []);
 
-  // Save to DB
+  // Save updated profile to the server
   async function saveCompanyProfile() {
     try {
       const res = await fetch("/api/user/company-profile", {
@@ -58,7 +63,7 @@ export default function CompanyProfilePage() {
       });
       if (!res.ok) throw new Error("Failed to update company profile");
     } catch (error) {
-      console.error(error);
+      console.error("Error updating company profile:", error);
     }
   }
 
@@ -83,7 +88,7 @@ export default function CompanyProfilePage() {
         onSave={saveCompanyProfile}
       />
 
-      {/* How We Work / Additional Info Section */}
+      {/* How We Work Section */}
       <HowWeWorkSection
         companyData={companyData}
         setCompanyData={setCompanyData}

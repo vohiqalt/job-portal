@@ -39,6 +39,7 @@ export async function GET() {
     return NextResponse.json({
       companyLogo: user.companyLogo || "",
       companyName: user.companyName || "",
+      email: user.email || "",
       companyDescription: user.companyDescription || "",
       howWeWork: user.howWeWork || "",
     });
