@@ -17,8 +17,13 @@ import { ImFilesEmpty, ImProfile } from "react-icons/im";
 export default function Navbar() {
   const { data: session } = useSession();
   const userType = session?.user?.userType; // "employer" | "job_seeker" | undefined
-  const userName = session?.user?.name;
   const companyName = session?.user?.companyName;
+  const userName = session?.user?.name;
+
+  const displayName =
+    userType === "employer"
+      ? companyName || "Company"
+      : userName?.split(" ")[0] || "User"; // Use company name or first name
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -83,7 +88,7 @@ export default function Navbar() {
             >
               <FiUser />
               <span className="flex items-center space-x-1">
-                <span>{userName || "User"}</span>
+                <span>{displayName}</span>
                 {((userType === "job_seeker" && !userName) ||
                   (userType === "employer" && !companyName)) && (
                   <span className="pl-1 text-red-500 font-bold">!</span>

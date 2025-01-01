@@ -48,6 +48,7 @@ export const authOptions = {
           userType: user.userType,
           bio: user.bio || "",
           location: user.location || "",
+          companyName: user.companyName || "", // Add this field for employers
         };
       },
     }),
@@ -71,7 +72,7 @@ export const authOptions = {
           existingUser = await User.create({
             name: user.name,
             email: user.email,
-            userType: "job_seeker",
+            userType: "job_seeker", // Default user type
             provider: account.provider,
           });
         }
@@ -82,6 +83,7 @@ export const authOptions = {
         token.userType = existingUser.userType;
         token.bio = existingUser.bio || "";
         token.location = existingUser.location || "";
+        token.companyName = existingUser.companyName || ""; // Add this field for employers
       } else {
         const existingUser = await User.findOne({ email: token.email });
         if (existingUser) {
@@ -91,6 +93,7 @@ export const authOptions = {
           token.userType = existingUser.userType;
           token.bio = existingUser.bio || "";
           token.location = existingUser.location || "";
+          token.companyName = existingUser.companyName || ""; // Add this field for employers
         }
       }
 
@@ -100,6 +103,7 @@ export const authOptions = {
       session.user = {
         id: token.id,
         name: token.name,
+        companyName: token.companyName || "", // Add this field for employers
         email: token.email,
         bio: token.bio || "",
         location: token.location || "",
