@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function CreateJobPage() {
@@ -13,7 +13,32 @@ export default function CreateJobPage() {
     description: "",
   });
 
+  const [companyName, setCompanyName] = useState<string | null>(null);
   const router = useRouter();
+
+  // Fetch the user's company name from the profile API
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const res = await fetch("/api/user/company-profile", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setCompanyName(data.companyName || "Unknown Company");
+          setForm((prev) => ({ ...prev, company: data.companyName || "" }));
+        } else {
+          console.error("Failed to fetch company profile.");
+        }
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+      }
+    }
+
+    fetchProfile();
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -40,52 +65,79 @@ export default function CreateJobPage() {
     <main className="p-6">
       <h1 className="text-2xl font-bold mb-4">Create Job Listing</h1>
       <form className="space-y-4" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Job Title"
-          className="w-full p-2 border border-gray-300 rounded text-black"
-          value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Company Name"
-          className="w-full p-2 border border-gray-300 rounded text-black"
-          value={form.company}
-          onChange={(e) => setForm({ ...form, company: e.target.value })}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Location"
-          className="w-full p-2 border border-gray-300 rounded text-black"
-          value={form.location}
-          onChange={(e) => setForm({ ...form, location: e.target.value })}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Salary"
-          className="w-full p-2 border border-gray-300 rounded text-black"
-          value={form.salary}
-          onChange={(e) => setForm({ ...form, salary: e.target.value })}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Tags (comma-separated)"
-          className="w-full p-2 border border-gray-300 rounded text-black"
-          value={form.tags}
-          onChange={(e) => setForm({ ...form, tags: e.target.value })}
-        />
-        <textarea
-          placeholder="Job Description"
-          className="w-full p-2 border border-gray-300 rounded text-black"
-          value={form.description}
-          onChange={(e) => setForm({ ...form, description: e.target.value })}
-          required
-        />
+        <div>
+          <label className="block text-sm font-medium mb-1">Job Title:</label>
+          <input
+            type="text"
+            placeholder="Job Title"
+            className="w-full p-2 border border-gray-300 rounded text-black"
+            value={form.title}
+            onChange={(e) => setForm({ ...form, title: e.target.value })}
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Company Name:
+          </label>
+          <input
+            type="text"
+            value={companyName || ""}
+            placeholder="Loading..."
+            className="w-full p-2 border border-gray-300 rounded text-gray-500 bg-gray-100"
+            disabled
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Location:</label>
+          <input
+            type="text"
+            placeholder="Location"
+            className="w-full p-2 border border-gray-300 rounded text-black"
+            value={form.location}
+            onChange={(e) => setForm({ ...form, location: e.target.value })}
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Salary:</label>
+          <input
+            type="text"
+            placeholder="Salary"
+            className="w-full p-2 border border-gray-300 rounded text-black"
+            value={form.salary}
+            onChange={(e) => setForm({ ...form, salary: e.target.value })}
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Tags:</label>
+          <input
+            type="text"
+            placeholder="Tags (comma-separated)"
+            className="w-full p-2 border border-gray-300 rounded text-black"
+            value={form.tags}
+            onChange={(e) => setForm({ ...form, tags: e.target.value })}
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Job Description:
+          </label>
+          <textarea
+            placeholder="Job Description"
+            className="w-full p-2 border border-gray-300 rounded text-black"
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
+            required
+          />
+        </div>
+
         <button
           type="submit"
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
