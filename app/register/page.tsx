@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
-    name: "",
     email: "",
     password: "",
     userType: "job_seeker",
@@ -44,14 +43,6 @@ export default function RegisterPage() {
         className="space-y-4 w-full max-w-md p-4 bg-black shadow-md rounded"
       >
         {error && <p className="text-red-500">{error}</p>}
-        <input
-          type="text"
-          placeholder="Name"
-          className="w-full p-2 border border-gray-300 rounded bg-gray-200 text-center text-black"
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-          required
-        />
         <input
           type="email"
           placeholder="Email"

@@ -37,4 +37,6 @@ export interface ProfileData {
   languages: string[];
   hobbies: string[];
   provider?: string;
+  companyName?: string;
+  userType?: string;
 }

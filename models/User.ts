@@ -24,7 +24,7 @@ const CertificateSchema = new mongoose.Schema({
 
 const UserSchema = new mongoose.Schema({
   // Common Fields
-  name: { type: String, required: true },
+  name: { type: String },
   email: { type: String, required: true, unique: true },
   password: {
     type: String,

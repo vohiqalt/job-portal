@@ -20,7 +20,7 @@ export default function Home() {
             <FeatureCard
               title="Your Profile"
               description="Showcase your skills, experience, and achievements to potential employers."
-              link="/profile"
+              link="/account/candidate/profile"
             />
             <FeatureCard
               title="Saved Jobs"
@@ -48,7 +48,7 @@ export default function Home() {
             <FeatureCard
               title="Company Profile"
               description="Update your company profile and showcase your brand to potential candidates."
-              link="/profile"
+              link="/account/company/profile"
             />
             <FeatureCard
               title="Post a Job"

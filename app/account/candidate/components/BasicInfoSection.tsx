@@ -23,6 +23,11 @@ function extractNickname(url: string): string {
   }
 }
 
+function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
 function stripWebsite(url: string): string {
   try {
     const urlObj = new URL(url);
@@ -43,11 +48,34 @@ export default function BasicInfoSection({
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
     const { name, value } = e.target;
+
+    // Allow all input during editing
     setProfileData((prev) => ({ ...prev, [name]: value }));
   }
 
   async function handleToggleEdit() {
     if (editing) {
+      // Validate required fields on save
+      if (!profileData.name.trim()) {
+        alert("Name cannot be empty.");
+        return;
+      }
+      if (
+        profileData.userType === "employer" &&
+        (!profileData.companyName || !profileData.companyName.trim())
+      ) {
+        alert("Company Name cannot be empty.");
+        return;
+      }
+      if (!profileData.email.trim()) {
+        alert("Email cannot be empty.");
+        return;
+      }
+      if (!isValidEmail(profileData.email.trim())) {
+        alert("Please enter a valid email address.");
+        return;
+      }
+
       await onSave();
       setEditing(false);
     } else {
@@ -95,16 +123,23 @@ export default function BasicInfoSection({
         <div className="flex-1 space-y-2">
           {/* Name */}
           {editing ? (
-            <input
-              type="text"
-              name="name"
-              value={profileData.name}
-              onChange={handleChange}
-              placeholder="Name (required)"
-              className="bg-gray-700 text-white px-2 py-1 rounded w-full"
-            />
+            <div className="flex items-center space-x-2">
+              <input
+                type="text"
+                name="name"
+                value={profileData.name}
+                onChange={handleChange}
+                placeholder="Name (required)"
+                className="bg-gray-700 text-white px-2 py-1 rounded w-full"
+              />
+            </div>
           ) : (
-            <p className="text-lg font-bold">{profileData.name || "Name"}</p>
+            <p className="text-lg font-bold flex items-center">
+              {profileData.name || "Name"}
+              {!profileData.name && (
+                <span className="text-red-500 font-bold ml-2">!</span>
+              )}
+            </p>
           )}
 
           {/* Email */}
@@ -140,7 +175,7 @@ export default function BasicInfoSection({
               name="phoneNumber"
               value={profileData.phoneNumber}
               onChange={handleChange}
-              placeholder="Phone number (required)"
+              placeholder="Phone number"
               className="bg-gray-700 text-white px-2 py-1 rounded w-full"
             />
           ) : (
@@ -252,7 +287,7 @@ export default function BasicInfoSection({
             name="cv"
             value={profileData.cv}
             onChange={handleChange}
-            placeholder="CV URL (required)"
+            placeholder="CV URL"
             className="bg-gray-700 text-white px-2 py-1 rounded w-full"
           />
         ) : (

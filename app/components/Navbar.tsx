@@ -17,15 +17,14 @@ import { ImFilesEmpty, ImProfile } from "react-icons/im";
 export default function Navbar() {
   const { data: session } = useSession();
   const userType = session?.user?.userType; // "employer" | "job_seeker" | undefined
+  const userName = session?.user?.name;
+  const companyName = session?.user?.companyName;
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  // We'll use a ref to detect clicks outside the dropdown
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
-  // Toggle the dropdown when the user clicks the profile button
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
-  // Close the dropdown if a click occurs outside of it
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -43,16 +42,13 @@ export default function Navbar() {
 
   return (
     <nav className="text-white bg-transparent p-4 flex justify-between items-center w-full max-w-screen-xl mx-auto">
-      {/* Logo / Title */}
       <div>
         <Link href="/" className="font-bold text-xl tracking-wide">
           Job Portal
         </Link>
       </div>
 
-      {/* Nav links on the right */}
       <div className="flex space-x-6">
-        {/* Visible to all users */}
         <Link
           href="/jobs"
           className="hover:bg-gray-700 px-4 py-2 rounded-lg transition duration-300 ease-in-out"
@@ -60,7 +56,6 @@ export default function Navbar() {
           Jobs
         </Link>
 
-        {/* Employer-only links in main navbar (optional) */}
         {userType === "employer" && (
           <>
             <Link
@@ -81,27 +76,36 @@ export default function Navbar() {
         )}
 
         {session ? (
-          /* Dropdown menu trigger + items */
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={toggleDropdown}
               className="hover:bg-gray-700 px-4 py-2 rounded-lg transition duration-300 ease-in-out flex items-center space-x-2"
             >
               <FiUser />
-              <span>{session.user.name || "User"}</span>
+              <span className="flex items-center space-x-1">
+                <span>{userName || "User"}</span>
+                {((userType === "job_seeker" && !userName) ||
+                  (userType === "employer" && !companyName)) && (
+                  <span className="pl-1 text-red-500 font-bold">!</span>
+                )}
+              </span>
             </button>
 
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-52 bg-gray-800 rounded shadow-lg z-50">
-                {/* Candidate-only dropdown items */}
                 {userType === "job_seeker" && (
                   <>
                     <Link
                       href="/account/candidate/profile"
-                      className="block px-4 py-2 hover:bg-gray-700"
+                      className="block px-4 py-2 hover:bg-gray-700 flex justify-between items-center"
                     >
-                      <ImProfile className="inline mr-2" />
-                      Candidate Profile
+                      <span>
+                        <ImProfile className="inline mr-2" />
+                        Candidate Profile
+                      </span>
+                      {!userName && (
+                        <span className="text-red-500 font-bold">!</span>
+                      )}
                     </Link>
                     <Link
                       href="/account/candidate/edit-resume"
@@ -127,15 +131,19 @@ export default function Navbar() {
                   </>
                 )}
 
-                {/* Employer-only dropdown items */}
                 {userType === "employer" && (
                   <>
                     <Link
                       href="/account/company/profile"
-                      className="block px-4 py-2 hover:bg-gray-700"
+                      className="block px-4 py-2 hover:bg-gray-700 flex justify-between items-center"
                     >
-                      <FaBuilding className="inline mr-2" />
-                      Company Profile
+                      <span>
+                        <FaBuilding className="inline mr-2" />
+                        Company Profile
+                      </span>
+                      {!companyName && (
+                        <span className="text-red-500 font-bold">!</span>
+                      )}
                     </Link>
                     <Link
                       href="/applications"
@@ -147,7 +155,6 @@ export default function Navbar() {
                   </>
                 )}
 
-                {/* Shared items for all logged-in users */}
                 <Link
                   href="/account/settings"
                   className="block px-4 py-2 hover:bg-gray-700"
@@ -168,7 +175,6 @@ export default function Navbar() {
             )}
           </div>
         ) : (
-          // If user not logged in, show login/register
           <>
             <Link
               href="/login"

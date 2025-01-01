@@ -5,10 +5,10 @@ import User from "@/models/User";
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password, userType } = await req.json();
+    const { email, password, userType } = await req.json();
 
     // Validate required fields
-    if (!name || !email || !password || !userType) {
+    if (!email || !password || !userType) {
       return NextResponse.json(
         { error: "All fields are required" },
         { status: 400 }
@@ -36,7 +36,6 @@ export async function POST(req: Request) {
 
     // Create a new user
     const newUser = new User({
-      name,
       email,
       password: hashedPassword,
       userType,
