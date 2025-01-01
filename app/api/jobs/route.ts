@@ -16,7 +16,10 @@ export async function GET(req: Request) {
 
     await dbConnect();
 
-    const jobs = await Job.find({}).lean();
+    // Fetch jobs and populate employerId to include companyName
+    const jobs = await Job.find({})
+      .populate("employerId", "companyName") // Populate only the companyName field
+      .lean();
 
     return new Response(JSON.stringify(jobs), {
       status: 200,
@@ -56,10 +59,10 @@ export async function POST(req: Request) {
       );
     }
 
-    const { title, company, location, salary, tags, description } = body;
+    const { title, location, salary, tags, description } = body;
 
     // Validate required fields
-    if (!title || !company || !location || !description) {
+    if (!title || !location || !description) {
       return new Response(
         JSON.stringify({ error: "Missing required fields" }),
         { status: 400, headers: { "Content-Type": "application/json" } }
@@ -69,7 +72,6 @@ export async function POST(req: Request) {
     // Create the job
     const job = await Job.create({
       title,
-      company,
       location,
       salary: salary ? parseInt(salary, 10) : undefined, // Ensure salary is a number
       tags: tags || [], // Default to empty array if tags are not provided

@@ -5,11 +5,13 @@ import { useEffect, useState } from "react";
 type Job = {
   _id: string;
   title: string;
-  company: string;
   location: string;
   description: string;
   salary?: number;
   isHidden: boolean;
+  employerId: {
+    companyName: string;
+  };
 };
 
 export default function JobsPage() {
@@ -62,7 +64,7 @@ export default function JobsPage() {
           {jobs.map((job) => (
             <li key={job._id} className="p-4 border rounded shadow">
               <h2 className="text-xl font-semibold">{job.title}</h2>
-              <p className="text-gray-300">{job.company}</p>
+              <p className="text-gray-300">{job.employerId.companyName}</p>
               <p className="text-gray-200">{job.location}</p>
               <p className="text-gray-500">{job.description}</p>
               {job.salary && (

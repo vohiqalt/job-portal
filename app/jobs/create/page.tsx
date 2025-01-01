@@ -1,44 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function CreateJobPage() {
   const [form, setForm] = useState({
     title: "",
-    company: "",
     location: "",
     salary: "",
     tags: "",
     description: "",
   });
 
-  const [companyName, setCompanyName] = useState<string | null>(null);
   const router = useRouter();
-
-  // Fetch the user's company name from the profile API
-  useEffect(() => {
-    async function fetchProfile() {
-      try {
-        const res = await fetch("/api/user/company-profile", {
-          method: "GET",
-          credentials: "include",
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          setCompanyName(data.companyName || "Unknown Company");
-          setForm((prev) => ({ ...prev, company: data.companyName || "" }));
-        } else {
-          console.error("Failed to fetch company profile.");
-        }
-      } catch (err) {
-        console.error("Error fetching profile:", err);
-      }
-    }
-
-    fetchProfile();
-  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -78,19 +52,6 @@ export default function CreateJobPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">
-            Company Name:
-          </label>
-          <input
-            type="text"
-            value={companyName || ""}
-            placeholder="Loading..."
-            className="w-full p-2 border border-gray-300 rounded text-gray-500 bg-gray-100"
-            disabled
-          />
-        </div>
-
-        <div>
           <label className="block text-sm font-medium mb-1">Location:</label>
           <input
             type="text"
@@ -110,7 +71,6 @@ export default function CreateJobPage() {
             className="w-full p-2 border border-gray-300 rounded text-black"
             value={form.salary}
             onChange={(e) => setForm({ ...form, salary: e.target.value })}
-            required
           />
         </div>
 
