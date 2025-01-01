@@ -8,28 +8,51 @@ type Job = {
   company: string;
   location: string;
   description: string;
-  salary?: number; // Include salary as an optional field
-  isHidden: boolean; // Add a property to track if the job is hidden
+  salary?: number;
+  isHidden: boolean;
 };
 
 export default function JobsPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchJobs() {
-      const res = await fetch("/api/jobs");
-      if (res.ok) {
-        const data: Job[] = await res.json(); // Ensure the response is typed
-        // Filter out hidden jobs before setting state
+      try {
+        const res = await fetch("/api/jobs", {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!res.ok) {
+          const error = await res.json();
+          setError(error.error || "Failed to fetch jobs");
+          return;
+        }
+
+        const data: Job[] = await res.json();
         const visibleJobs = data.filter((job) => !job.isHidden);
         setJobs(visibleJobs);
-      } else {
-        console.error("Failed to fetch jobs");
+      } catch (err) {
+        console.error("Error during fetch:", err);
+        setError("An unexpected error occurred.");
       }
     }
 
     fetchJobs();
   }, []);
+
+  if (error) {
+    return (
+      <div className="p-6 text-red-500">
+        <h1 className="text-2xl font-bold">Error</h1>
+        <p>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6">

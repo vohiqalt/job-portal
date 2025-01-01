@@ -18,47 +18,50 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        try {
-          const { email, password } = credentials || {};
-          if (!email || !password) {
-            throw new Error("Email and password are required.");
-          }
-
-          await dbConnect();
-
-          const user = await User.findOne({ email });
-          if (!user) {
-            throw new Error("Invalid email or password.");
-          }
-
-          if (!user.password) {
-            throw new Error(
-              "This account was registered using Google. Please log in with Google."
-            );
-          }
-
-          const isPasswordValid = await bcrypt.compare(password, user.password);
-          if (!isPasswordValid) {
-            throw new Error("Invalid email or password.");
-          }
-
-          return {
-            id: user._id.toString(),
-            name: user.name,
-            email: user.email,
-            userType: user.userType,
-            bio: user.bio || "",
-            location: user.location || "",
-          };
-        } catch (error) {
-          console.error("Authorize Error:", error);
-          throw new Error(error.message || "Authorization failed.");
+        const { email, password } = credentials || {};
+        if (!email || !password) {
+          throw new Error("Email and password are required.");
         }
+
+        await dbConnect();
+
+        const user = await User.findOne({ email });
+        if (!user) {
+          throw new Error("Invalid email or password.");
+        }
+
+        if (!user.password) {
+          throw new Error(
+            "This account was registered using Google. Please log in with Google."
+          );
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+          throw new Error("Invalid email or password.");
+        }
+
+        return {
+          id: user._id.toString(),
+          name: user.name,
+          email: user.email,
+          userType: user.userType,
+          bio: user.bio || "",
+          location: user.location || "",
+        };
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({
+      token,
+      user,
+      account,
+    }: {
+      token: any;
+      user: any;
+      account: any;
+    }) {
       await dbConnect();
 
       if (account && user) {
@@ -68,7 +71,7 @@ export const authOptions = {
           existingUser = await User.create({
             name: user.name,
             email: user.email,
-            userType: "job_seeker", // Default type
+            userType: "job_seeker",
             provider: account.provider,
           });
         }
@@ -93,7 +96,7 @@ export const authOptions = {
 
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: { session: any; token: any }) {
       session.user = {
         id: token.id,
         name: token.name,
