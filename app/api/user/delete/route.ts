@@ -4,7 +4,7 @@ import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import Job from "@/models/Job";
 
-export async function DELETE(req: Request) {
+export async function DELETE() {
   try {
     const session = await getServerSession(authOptions);
 
@@ -15,6 +15,11 @@ export async function DELETE(req: Request) {
     }
 
     const { email } = session.user;
+    if (!email) {
+      return new Response(JSON.stringify({ error: "No email in session." }), {
+        status: 400,
+      });
+    }
 
     await dbConnect();
 
@@ -25,10 +30,12 @@ export async function DELETE(req: Request) {
       });
     }
 
+    // If the user is an employer, delete all associated jobs
     if (user.userType === "employer") {
       await Job.deleteMany({ employerId: user._id });
     }
 
+    // Delete the user
     await User.findOneAndDelete({ email });
 
     return new Response(
