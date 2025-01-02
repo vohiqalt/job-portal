@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import Image from "next/image";
 
+import { FaRegBuilding } from "react-icons/fa";
+
 type Job = {
   _id: string;
   title: string;
@@ -89,7 +91,13 @@ export default function JobsPage() {
                   <h2 className="text-xl font-semibold text-white">
                     {job.title}
                   </h2>
-                  <p className="text-gray-400">{job.employerId.companyName}</p>
+
+                  <div className="flex items-center text-gray-400 text-sm mt-2">
+                    <FaRegBuilding className="mr-1" />
+                    <p className="text-gray-400">
+                      {job.employerId.companyName}
+                    </p>
+                  </div>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {job.tags.map((tag, index) => (
                       <span
