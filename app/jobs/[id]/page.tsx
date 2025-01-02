@@ -16,6 +16,8 @@ type Job = {
   employerId: {
     companyName: string;
     companyLogo: string;
+    bio: string; // Added company bio
+    howWeWork: string; // Added "how we work" info
   };
   tags: string[];
 };
@@ -94,7 +96,17 @@ export default function JobDetails() {
         </div>
       </div>
       {/* Job Description */}
-      <p className="text-gray-200">{job.description}</p>
+      <p className="text-gray-200 mb-6">{job.description}</p>
+
+      {/* About Us Section */}
+      <div className="border-t border-gray-700 pt-6 mt-6">
+        <h2 className="text-xl font-semibold text-white">
+          About {job.employerId.companyName}
+        </h2>
+        <p className="text-gray-200 mt-2">{job.employerId.bio}</p>
+        <h3 className="text-lg font-semibold text-white mt-6">How We Work</h3>
+        <p className="text-gray-200 mt-2">{job.employerId.howWeWork}</p>
+      </div>
     </main>
   );
 }

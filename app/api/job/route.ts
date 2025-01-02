@@ -22,8 +22,9 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Invalid job ID" }, { status: 400 });
     }
 
+    // Populate employerId with companyName, companyLogo, bio, and howWeWork
     const job = await Job.findById(id)
-      .populate("employerId", "companyName companyLogo") // Include companyLogo field
+      .populate("employerId", "companyName companyLogo bio howWeWork") // Populate bio and howWeWork
       .lean();
 
     if (!job) {
