@@ -1,6 +1,11 @@
 "use client";
 
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
+
+interface Certificate {
+  title: string;
+  authority: string;
+}
 import { ProfileData } from "../profile/types";
 
 interface Props {

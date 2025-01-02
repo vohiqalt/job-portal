@@ -69,15 +69,27 @@ export async function POST(req: Request) {
       );
     }
 
+    // Prepare the location string and flag
+    let locationString = "";
+    let flagUrl = null;
+
+    if (typeof location === "object" && location.city && location.country) {
+      locationString = `${location.city}, ${location.country}`;
+      flagUrl = location.flag || null;
+    } else {
+      locationString = location; // Handle as string if no object provided
+    }
+
     // Create the job
     const job = await Job.create({
       title,
-      location,
-      salary: salary ? parseInt(salary, 10) : undefined, // Ensure salary is a number
-      tags: tags || [], // Default to empty array if tags are not provided
+      location: locationString, // Save the formatted location string
+      salary: salary ? parseInt(salary, 10) : undefined,
+      tags: tags || [],
       description,
       employerId,
       userEmail: email,
+      flag: flagUrl, // Save the flag URL in the database
     });
 
     return new Response(

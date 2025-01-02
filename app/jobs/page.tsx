@@ -11,6 +11,7 @@ type Job = {
   _id: string;
   title: string;
   location: string;
+  flag: string;
   description: string;
   salary?: number;
   isHidden: boolean;
@@ -111,6 +112,16 @@ export default function JobsPage() {
                   <div className="flex items-center text-gray-400 text-sm mt-2">
                     <FaMapMarkerAlt className="mr-1" />
                     <p>{job.location}</p>
+                    {job.flag && (
+                      <p className="ml-2">
+                        <Image
+                          src={job.flag}
+                          width={20}
+                          height={20}
+                          alt={`Flag of ${job.location}`}
+                        />
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>

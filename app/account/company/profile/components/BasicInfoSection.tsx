@@ -5,26 +5,6 @@ import { CompanyData } from "../types";
 
 interface Props {
   companyData: CompanyData;
-
-  setCompanyData: Dispatch<SetStateAction<CompanyData>>;
-
-  editingHowWeWork: boolean;
-
-  setEditingHowWeWork: Dispatch<SetStateAction<boolean>>;
-
-  onSave: () => Promise<void>;
-}
-
-interface CompanyData {
-  companyLogo: string;
-  companyName: string;
-  companyDescription: string;
-  howWeWork: string;
-  email: string;
-}
-
-interface Props {
-  companyData: CompanyData;
   setCompanyData: Dispatch<SetStateAction<CompanyData>>;
   editingBasicInfo: boolean;
   setEditingBasicInfo: Dispatch<SetStateAction<boolean>>;

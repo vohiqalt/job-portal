@@ -19,9 +19,6 @@ export default function CompanyProfilePage() {
     email: "",
     companyDescription: "",
     howWeWork: "",
-    personalWebsite: "",
-    linkedIn: "",
-    twitter: "",
   });
 
   // Edit toggles

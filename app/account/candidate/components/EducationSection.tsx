@@ -1,7 +1,6 @@
 "use client";
 
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
-import { ProfileData } from "../profile/types";
 
 interface Education {
   institution: string;
@@ -10,9 +9,7 @@ interface Education {
   endDate: string;
   description: string;
 }
-interface ProfileData {
-  education: Education[];
-}
+import { ProfileData } from "../profile/types";
 
 interface Props {
   profileData: ProfileData;
