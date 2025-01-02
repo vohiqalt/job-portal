@@ -2,22 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { FaMapMarkerAlt } from "react-icons/fa";
+import { FaMapMarkerAlt, FaRegBuilding } from "react-icons/fa";
+import { TbMoneybag } from "react-icons/tb";
 import Image from "next/image";
-
-import { FaRegBuilding } from "react-icons/fa";
 
 type Job = {
   _id: string;
   title: string;
   location: string;
-  flag: string;
+  flag: string | null;
+  currency?: string;
   description: string;
   salary?: number;
   isHidden: boolean;
   employerId: {
     companyName: string;
-    companyLogo: string;
+    companyLogo?: string;
   };
   tags: string[];
 };
@@ -73,7 +73,7 @@ export default function JobsPage() {
           {jobs.map((job) => (
             <li
               key={job._id}
-              onClick={() => router.push(`/jobs/${job._id}`)} // Navigate to job details page
+              onClick={() => router.push(`/jobs/${job._id}`)}
               className="p-4 border border-gray-700 rounded-lg shadow-md bg-gray-800 cursor-pointer hover:bg-gray-700 transition flex items-center justify-between"
             >
               <div className="flex items-center gap-4">
@@ -95,9 +95,7 @@ export default function JobsPage() {
 
                   <div className="flex items-center text-gray-400 text-sm mt-2">
                     <FaRegBuilding className="mr-1" />
-                    <p className="text-gray-400">
-                      {job.employerId.companyName}
-                    </p>
+                    <p>{job.employerId.companyName}</p>
                   </div>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {job.tags.map((tag, index) => (
@@ -113,14 +111,13 @@ export default function JobsPage() {
                     <FaMapMarkerAlt className="mr-1" />
                     <p>{job.location}</p>
                     {job.flag && (
-                      <p className="ml-2">
-                        <Image
-                          src={job.flag}
-                          width={20}
-                          height={20}
-                          alt={`Flag of ${job.location}`}
-                        />
-                      </p>
+                      <Image
+                        src={job.flag}
+                        width={20}
+                        height={20}
+                        alt={`Flag of ${job.location}`}
+                        className="ml-2"
+                      />
                     )}
                   </div>
                 </div>
@@ -128,9 +125,12 @@ export default function JobsPage() {
               {/* Salary Info */}
               <div className="text-right">
                 {job.salary ? (
-                  <p className="text-yellow-400 font-medium text-lg">
-                    {`$${job.salary.toLocaleString()}`}
-                  </p>
+                  <div className="flex items-center justify-end text-yellow-400 font-medium text-lg">
+                    <TbMoneybag className="mr-1" />
+                    <p>{`${job.salary.toLocaleString()} ${
+                      job.currency || ""
+                    }`}</p>
+                  </div>
                 ) : (
                   <p className="text-gray-400">Undisclosed salary</p>
                 )}

@@ -59,10 +59,10 @@ export async function POST(req: Request) {
       );
     }
 
-    const { title, location, salary, tags, description } = body;
+    const { title, location, salary, tags, description, currency } = body;
 
     // Validate required fields
-    if (!title || !location || !description) {
+    if (!title || !location || !description || !currency) {
       return new Response(
         JSON.stringify({ error: "Missing required fields" }),
         { status: 400, headers: { "Content-Type": "application/json" } }
@@ -90,6 +90,7 @@ export async function POST(req: Request) {
       employerId,
       userEmail: email,
       flag: flagUrl, // Save the flag URL in the database
+      currency, // Save the currency in the database
     });
 
     return new Response(

@@ -12,6 +12,7 @@ type Job = {
   location: string;
   description: string;
   salary?: number;
+  currency?: string;
   employerId: {
     companyName: string;
     companyLogo: string;
@@ -85,7 +86,7 @@ export default function JobDetails() {
           {job.salary ? (
             <p className="text-yellow-400 font-semibold text-xl flex items-center justify-end">
               <TbMoneybag className="mr-2" />
-              {`${job.salary.toLocaleString()} PLN`}
+              {`${job.salary.toLocaleString()} ${job.currency || ""}`}
             </p>
           ) : (
             <p className="text-gray-400">Undisclosed salary</p>

@@ -8,6 +8,7 @@ const JobSchema = new Schema(
       required: true,
     },
     flag: { type: String, default: null }, // Add flag URL
+    currency: { type: String }, // Add currency field
     salary: { type: Number },
     description: { type: String, required: true },
     isHidden: { type: Boolean, default: false },
